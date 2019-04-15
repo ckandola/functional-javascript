@@ -15,6 +15,12 @@
 
 module.exports = function(namespace){
     return function(){
-        // will return to this later
+        console.log.bind(null, namespace).apply(this, arguments);
     }
 }
+
+/* Official solution
+    module.exports = function(namespace) {
+      return console.log.bind(console, namespace)   // what does it mean to bind to the console?
+    }
+*/
