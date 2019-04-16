@@ -16,20 +16,37 @@
 
 function getDependencies(tree){
     var arr = [];
-
-    // helper is given a dependencies object
-    function helper(dep, givenArr){
-        if(dep.hasOwnProperty('dependencies')){
-            dep.dependencies.map(function(d){
-                givenArr.push(d);
-            });
-            return helper(dep.dependencies);
+    
+    function helper(obj){
+        if(obj && obj['dependencies']){
+            Object.keys(obj.dependencies).forEach(function (d){
+                var val = d + '@' + obj.dependencies[d].version;
+                if(arr.indexOf(val) < 0){
+                    arr.push(val);
+                }
+                helper(obj['dependencies'][d]);
+            })
         }
+    };
+    if(tree && tree['dependencies']){
+        helper(tree);
     }
-    if(tree && tree.hasOwnProperty('dependencies')){
-        helper(tree['dependencies'], arr);
-    }
-    return arr;
+    return arr.sort();
 }
 
 module.exports = getDependencies;
+
+/* Official Solution
+    function getDependencies(mod, result) {
+        result = result || []
+        var dependencies = mod && mod.dependencies || []
+        Object.keys(dependencies).forEach(function(dep) {
+            var key = dep + '@' + mod.dependencies[dep].version
+            if (result.indexOf(key) === -1) result.push(key)
+            getDependencies(mod.dependencies[dep], result)
+        })
+        return result.sort()
+        }
+
+        module.exports = getDependencies
+*/
