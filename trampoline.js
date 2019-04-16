@@ -14,21 +14,51 @@
     (you may change it in other ways though).
 */
 
+
 function repeat(operation, num){
-    // Modify this
     if(num <= 0){
         return;
     }
-    operation();
-    return repeat(operation, --num);
+    if(num % 2 == 0){
+        operation();
+    } else {
+        return repeat(operation, --num);
+    }
 }
 
 function trampoline(fn){
-    // implement
+    return function(){
+        var result = fn.apply(this);
+        while(result instanceof Function){
+            result = result();
+        }
+        return result;
+    }
 }
 
 module.exports = function(operation, num){
-    // call trampoline
     trampoline(operation);
     return repeat(operation, num);
 }
+
+/* Official solution
+    function repeat(operation, num) {
+      return function() {
+        if (num <= 0) return
+        operation()
+        return repeat(operation, --num)
+      }
+    }
+
+    function trampoline(fn) {
+      while(fn && typeof fn === 'function') {
+        fn = fn()
+      }
+    }
+
+    module.exports = function(operation, num) {
+      trampoline(function() {
+        return repeat(operation, num)
+      })
+    }
+*/
